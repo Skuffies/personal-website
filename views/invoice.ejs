@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Skapa faktura</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        h2 {
+            margin-top: 35px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        .article {
+            display: grid;
+            grid-template-columns: 80px 1fr 140px 100px 40px;
+            gap: 10px;
+            align-items: end;
+            margin-bottom: 10px;
+        }
+
+        .remove {
+            height: 40px;
+            border: none;
+            background: #e74c3c;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .add {
+            margin-top: 5px;
+            padding: 10px 15px;
+            border: 1px solid #aaa;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit {
+            width: 100%;
+            margin-top: 35px;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            background: #222;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .submit:hover {
+            background: #444;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .article {
+                grid-template-columns: 1fr;
+                padding: 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+
+            .remove {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Skapa faktura</h1>
+
+    <form action="/create-invoice" method="POST">
+
+        <h2>Fakturainformation</h2>
+
+        <div class="grid">
+
+            <div class="field">
+                <label>Typ</label>
+
+                <select name="type">
+                    <option value="faktura" selected>Faktura</option>
+                    <option value="kvitto">Kvitto</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Nummer</label>
+
+                <input
+                    type="text"
+                    name="number"
+                    placeholder="2026-001"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>Datum</label>
+
+                <input
+                    type="date"
+                    name="date"
+                    id="date"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>Förfallodatum</label>
+
+                <input
+                    type="date"
+                    name="dueDate"
+                    id="dueDate"
+                    required
+                >
+            </div>
+
+        </div>
+
+
+        <h2>Företag</h2>
+
+        <div class="grid">
+
+            <div class="field full">
+                <label>Bolag</label>
+
+                <input
+                    type="text"
+                    name="company_name"
+                    value="Emil Söderqvist"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>Org.nr / Person.nr</label>
+
+                <input
+                    type="text"
+                    name="company_orgNumber"
+                    value="20071103-6194"
+                >
+            </div>
+
+            <div class="field">
+                <label>Momsregistreringsnummer</label>
+
+                <input
+                    type="text"
+                    name="company_vatNumber"
+                    value="SE559123456701"
+                >
+            </div>
+
+            <div class="field full">
+                <label>Gatuadress</label>
+
+                <input
+                    type="text"
+                    name="company_address"
+                    value="Södergatan 3F"
+                >
+            </div>
+
+            <div class="field">
+                <label>Stad</label>
+
+                <input
+                    type="text"
+                    name="company_city"
+                    value="Staffanstorp"
+                >
+            </div>
+
+            <div class="field">
+                <label>Postkod</label>
+
+                <input
+                    type="text"
+                    name="company_postalCode"
+                    value="245 31"
+                >
+            </div>
+
+            <div class="field">
+                <label>Telefon</label>
+
+                <input
+                    type="text"
+                    name="company_phone"
+                    value="070-385 42 36"
+                >
+            </div>
+
+            <div class="field">
+                <label>E-post</label>
+
+                <input
+                    type="email"
+                    name="company_email"
+                    value="kontakt@emilsoderqvist.com"
+                >
+            </div>
+
+            <div class="field full">
+                <label>Hemsida</label>
+
+                <input
+                    type="text"
+                    name="company_website"
+                    value="https://emilsoderqvist.com"
+                >
+            </div>
+
+        </div>
+
+
+        <h2>Kund</h2>
+
+        <div class="grid">
+
+            <div class="field full">
+                <label>Kundnamn</label>
+
+                <input
+                    type="text"
+                    name="customer_name"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>Kund-ID</label>
+
+                <input
+                    type="text"
+                    name="customer_id"
+                    placeholder="K-001"
+                >
+            </div>
+
+            <div class="field">
+                <label>Telefonnummer</label>
+
+                <input
+                    type="text"
+                    name="customer_phone"
+                >
+            </div>
+
+            <div class="field">
+                <label for="customer_personNumber">Personnummer</label>
+                <input
+                    type="text"
+                    id="customer_personNumber"
+                    name="customer_personNumber"
+                    placeholder="YYYYMMDD-XXXX"
+                >
+            </div>
+
+            <div class="field full">
+                <label>Gatuadress</label>
+
+                <input
+                    type="text"
+                    name="customer_address"
+                >
+            </div>
+
+            <div class="field">
+                <label>Stad</label>
+
+                <input
+                    type="text"
+                    name="customer_city"
+                    placeholder="Staffanstorp"
+                >
+            </div>
+
+            <div class="field">
+                <label>Postkod</label>
+
+                <input
+                    type="text"
+                    name="customer_postalCode"
+                >
+            </div>
+
+        </div>
+
+
+        <h2>Artiklar</h2>
+
+        <div id="articles">
+
+            <div class="article">
+
+                <div class="field">
+                    <label>Antal</label>
+
+                    <input
+                        type="number"
+                        name="quantity[]"
+                        value="1"
+                        min="0"
+                        step="1"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Artikelnamn</label>
+
+                    <input
+                        type="text"
+                        name="article_name[]"
+                        value="Konsult i hemmet"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Pris exkl. moms</label>
+
+                    <input
+                        type="number"
+                        name="priceExclVat[]"
+                        value="300"
+                        min="0"
+                        step="1"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Moms %</label>
+
+                    <input
+                        type="number"
+                        name="vatRate[]"
+                        value="25"
+                        min="0"
+                        step="1"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    class="remove"
+                    onclick="removeArticle(this)"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="article">
+
+                <div class="field">
+                    <label>Antal</label>
+
+                    <input
+                        type="number"
+                        name="quantity[]"
+                        value="1"
+                        min="0"
+                        step="1"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Artikelnamn</label>
+
+                    <input
+                        type="text"
+                        name="article_name[]"
+                        value="Utkörningsavgift Staffanstorp"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Pris exkl. moms</label>
+
+                    <input
+                        type="number"
+                        name="priceExclVat[]"
+                        value="16"
+                        min="0"
+                        step="1"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Moms %</label>
+
+                    <input
+                        type="number"
+                        name="vatRate[]"
+                        value="25"
+                        min="0"
+                        step="1"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    class="remove"
+                    onclick="removeArticle(this)"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="add"
+            onclick="addArticle()"
+        >
+            + Lägg till artikel
+        </button>
+
+
+        <button
+            type="submit"
+            class="submit"
+        >
+            Skapa PDF
+        </button>
+
+    </form>
+
+</div>
+
+
+<script>
+
+    /*
+     * Format a Date as YYYY-MM-DD
+     */
+    function formatDate(date) {
+
+        const year = date.getFullYear();
+
+        const month = String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+        const day = String(
+            date.getDate()
+        ).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+
+    /*
+     * Set today's date and due date one month ahead
+     */
+    function setDefaultDates() {
+
+        const today = new Date();
+
+        const dueDate = new Date(today);
+
+        dueDate.setMonth(
+            dueDate.getMonth() + 1
+        );
+
+        document.getElementById("date").value =
+            formatDate(today);
+
+        document.getElementById("dueDate").value =
+            formatDate(dueDate);
+    }
+
+
+    /*
+     * Add a new article
+     */
+    function addArticle() {
+
+        const container =
+            document.getElementById("articles");
+
+        const article =
+            document.createElement("div");
+
+        article.className = "article";
+
+        article.innerHTML = `
+            <div class="field">
+                <label>Antal</label>
+
+                <input
+                    type="number"
+                    name="quantity[]"
+                    value="1"
+                    min="0"
+                    step="1"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>Artikelnamn</label>
+
+                <input
+                    type="text"
+                    name="article_name[]"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>Pris exkl. moms</label>
+
+                <input
+                    type="number"
+                    name="priceExclVat[]"
+                    min="0"
+                    step="1"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>Moms %</label>
+
+                <input
+                    type="number"
+                    name="vatRate[]"
+                    value="25"
+                    min="0"
+                    step="1"
+                    required
+                >
+            </div>
+
+            <button
+                type="button"
+                class="remove"
+                onclick="removeArticle(this)"
+            >
+                ×
+            </button>
+        `;
+
+        container.appendChild(article);
+    }
+
+
+    /*
+     * Remove an article
+     */
+    function removeArticle(button) {
+
+        const articles =
+            document.querySelectorAll(".article");
+
+        if (articles.length <= 1) {
+            return;
+        }
+
+        button.parentElement.remove();
+    }
+
+
+    /*
+     * Set dates when page loads
+     */
+    setDefaultDates();
+
+</script>
+
+</body>
+</html>
